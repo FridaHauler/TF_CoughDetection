@@ -16,23 +16,6 @@ from tensorflow.keras import Model
 import tensorflow as tf
 from tensorflow import lite
 
-import os, re, shutil
-
-def getFileNamesFromDir(folder,prefix):
-    fileRegex = re.compile(r'([a-zA-Z0-9_])%s\.csv' % prefix)
-    folder = os.path.abspath(folder)
-    # FileNotFoundError: [Errno 2] No such file or directory:   '*_<prefix>.csv'
-    os.chdir(folder)  # This line is to avoid the FileNotFoundError.
-    # Make a list to contain the file with prefix.
-    fileNames = list()
-    for filename in os.listdir(folder):
-        if re.search(fileRegex, filename):
-            fileNames.append(filename)
-            print('fileName.....', filename)
-    return fileNames
-
-
-
 # load a single file as a numpy array
 def load_file(filepath):
 	dataframe = read_csv(filepath, header=None, delim_whitespace=True)
@@ -46,7 +29,6 @@ def load_group(filenames, prefix=''):
 		loaded.append(data)
 	# stack group so that features are the 3rd dimension
 	loaded = dstack(loaded)
-	#print('loaded groups stacked: ####### ', loaded)
 	return loaded
 
 # load a dataset group, such as train or test
@@ -54,32 +36,23 @@ def load_dataset_group(group, prefix=''):
 	filepath = prefix + group + '/Inertial Signals/'
 	# load all 9 files as a single array
 	filenames = list()
-	myfilenames = list()
 	# total acceleration
 	filenames += ['total_acc_x_'+group+'.txt', 'total_acc_y_'+group+'.txt', 'total_acc_z_'+group+'.txt']
-	#print('filenames total: ', filenames)
 	# body acceleration
 	filenames += ['body_acc_x_'+group+'.txt', 'body_acc_y_'+group+'.txt', 'body_acc_z_'+group+'.txt']
 	# body gyroscope
 	filenames += ['body_gyro_x_'+group+'.txt', 'body_gyro_y_'+group+'.txt', 'body_gyro_z_'+group+'.txt']
 	# load input data
 	X = load_group(filenames, filepath)
-	#print('allfilenames: ',filenames, 'path: ', filepath)
 	# load class output
 	y = load_file(prefix + group + '/y_'+group+'.txt')
-	### stuff to mess around with:
-	mypath = 'c:\\Users\\frida.hauler\\Anaconda3\\myTries\dataSets\\'
-	myfilenames += [getFileNamesFromDir(mypath, "frames" )]
-	xx=load_group(myfilenames, mypath)
-	print('$$$$$$$$$$$$$$$', xx, type(myfilenames), 'vs filenames" ', X, type(filenames) )
 	return X, y
 
 # load the dataset, returns train and test X and y elements
 def load_dataset(prefix=''):
 	# load all train
-	print('**************************************', prefix)
 	trainX, trainy = load_dataset_group('train', prefix + 'HARDataset/')
-	#print(trainX.shape, trainy.shape)
+	print(trainX.shape, trainy.shape)
 	# load all test
 	testX, testy = load_dataset_group('test', prefix + 'HARDataset/')
 	print(testX.shape, testy.shape)
@@ -142,14 +115,12 @@ def run_experiment(repeats=10):
 	# convert keras model to tflite and save it
 	# Save the model
 	kmodel.save('kerasModel.h5')
-	#converter = tf.lite.TFLiteConverter.from_keras_model(kmodel)
-	#tflite_model = converter.convert()
-	#tflite_model_name = "mymodel.tflite"
-	#open(tflite_model_name, "wb").write(tflite_model)
+	converter = tf.lite.TFLiteConverter.from_keras_model(kmodel)
+	tflite_model = converter.convert()
+	tflite_model_name = "mymodel.tflite"
+	open(tflite_model_name, "wb").write(tflite_model)
 
 	#model.save("model.h5")
 
 # run the experiment
-#run_experiment()
-
-trainX, trainy, testX, testy = load_dataset('C:\\Brainlab\\CoughDetectionApp\\src\\')
+run_experiment()
