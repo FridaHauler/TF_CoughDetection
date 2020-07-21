@@ -32,7 +32,7 @@ def load_group(filenames, prefix=''):
     return loaded
 
 # load a dataset group, such as train or test
-def load_HARdataset_group(group, prefix=''):
+def load_dataset_group(group, prefix=''):
     filepath = prefix + group + '/Inertial Signals/'
     # load all 9 files as a single array
     filenames = list()
@@ -49,12 +49,12 @@ def load_HARdataset_group(group, prefix=''):
     return X, y
 
 # load the dataset, returns train and test X and y elements
-def load_HARdataset(prefix=''):
+def load_dataset(prefix=''):
     # load all train
-    trainX, trainy = load_HARdataset_group('train', prefix + 'HARDataset/')
+    trainX, trainy = load_dataset_group('train', prefix + 'HARDataset/')
     print('x train shape:', trainX.shape, 'train y shape:',  trainy.shape)
     # load all test
-    testX, testy = load_HARdataset_group('test', prefix + 'HARDataset/')
+    testX, testy = load_dataset_group('test', prefix + 'HARDataset/')
     print(testX.shape, testy.shape)
     # zero-offset class values
     trainy = trainy - 1
