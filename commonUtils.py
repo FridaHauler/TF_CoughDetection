@@ -139,7 +139,7 @@ def readfiles(mypath):
             if item[0] != 'noLabel':
                     #print('what to do with the noLabels?')
                     label.append(item[0])
-                    reading.append(item[1:50])
+                    reading.append(item[1:])
 
         master_record.append(reading)
         master_label.append(label)
@@ -166,7 +166,21 @@ def readfiles(mypath):
     #frames = np.reshape(train_record, (1,6))
     print("Plotting results..." ,len(train_record))
     #pd.DataFrame(data=test_record, index='1', columns='frames*', dtype=None)
-        
+
+
+def split_list_into_chunks(data, chunk_size=6):
+    """
+    Accepts a list and splits it into even-sized chunks (defaulted to 6). Assumes len(data) is divisible by chunk_size.
+
+    :param data:
+    :type data: list
+    :param chunk_size:
+    :type chunk_size: int
+    :return: list
+    """
+    return [data[i:i + chunk_size] for i in range(0, len(data), chunk_size)]
+
+
 def reshape(df_file, n_steps, n_length):
         #n_steps, n_length = 50, 301
         #trainX = df_file.reshape((df_file.shape[0], n_steps, n_length))
