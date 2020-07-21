@@ -82,8 +82,25 @@ def getFilesFromDir(folder,prefix):
             fileNames.append(filename)
     return fileNames
 
+def shuffle_data(trans_master_record, backup_record, trunc_master_label, master_file_list):
+    length = len(trans_master_record)
+    x = [i for i in range(0, length)]
+    print('xxxxxxxxx10xxxxxxxxxxx: ', x[0:10])
+    np.random.seed()
+    np.random.shuffle(x)
+    new_trans_master_record = []
+    new_backup_record = []
+    new_trunc_master_label = []
+    new_master_file_list = []
+    for i in x:
+        new_trans_master_record.append(copy(trans_master_record[i]))  
+        new_backup_record.append(copy(backup_record[i]))
+        new_trunc_master_label.append(copy(trunc_master_label[i]))
+        new_master_file_list.append(copy(master_file_list[i]))
+    return new_trans_master_record, new_backup_record, new_trunc_master_label, new_master_file_list
+
 def readfiles(mypath):
-    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+    allfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
     
     master_record = []
     master_label = []
@@ -98,74 +115,66 @@ def readfiles(mypath):
     
     index = 0
     
-    #removing files which are known to have missing t_peak, t_end or s_end 
-    missing_label_files = \
-    ['yyJ2vgHtQJuhMsdhAx41_frames.csv'] 
-    
-    onlyfiles = list(set(onlyfiles) - set(missing_label_files)) 
-    print('*********fileParsed********', onlyfiles)
-    for file in onlyfiles:
+    allfiles = list(set(allfiles)) 
+    #print('*********fileParsed********', allfiles)
+    for file in allfiles:
         master_file_list.append(file)
         file_addr = mypath + file
         master_file_index[file] = index
         with open(file_addr,'r') as fp:
             read_file = fp.readlines()[6:]
-            print('*****lenght of the file*****', len(read_file))
+            #print('*****lenght of the file*****', len(read_file))
             record_data_lengths.append(len(read_file))
             for i in range(0, len(read_file)):
                     read_file[i] = read_file[i].rstrip()
-        
+
         new_read_file = []
         for item in read_file:
             new_read_file.append(item.split(','))
-        #print('###################', item.split(','))
+        #print('###################', new_read_file)
         reading = []
         label = []
         
         for item in new_read_file:
-         
-            label.append(item[0])
-            reading.append(item[1:50])
-            #print('item:', item[0:3])
+            if item[0] != 'noLabel':
+                    #print('what to do with the noLabels?')
+                    label.append(item[0])
+                    reading.append(item[1:50])
 
         master_record.append(reading)
         master_label.append(label)
-        
+        #print('test format:', master_label[0:5], master_record[0:5])
+		
         index = index + 1
+        #check and find if any readings have one or more labels missing
+    #print("read files...", index)
     
-    print("Creating the training and testing data-blocks for model input...")
-        
-    trans_master_record, backup_record, trunc_master_label, master_file_list = \
-            shuffle_data(trans_master_record, backup_record, trunc_master_label, master_file_list)
+    #print("Creating model training and testing data-blocks from master file list:...", master_file_list[0:10])
+  
 
     #65-35 split
-    train_record = trans_master_record[0:50]
-    print(train_record)
-    train_label = trunc_master_label[0:50]
+    train_record = master_record[1:50]
+    #print(train_record)
+    train_label = master_label[0:50]
     train_files = master_file_list[0: 50]
     
-    test_record = trans_master_record[50:122]
-    test_label = trunc_master_label[50:122]
-    test_files = master_file_list[50: 122]
-    orig_test_record = backup_record[50:122]
+    test_record = master_record[50:100]
+    test_label = master_label[50:100]
+    test_files = master_file_list[50: 100]
     
     num_iterations = 1
+    frames = np.reshape(train_record, (1,2))
+    print("Plotting results..." ,size(train_record))
     
-    print("Plotting results...")
-    ret = 1
-    ret = new_plot1(train_record, test_record, orig_test_record,\
-        test_label, test_files, num_iterations)
-    if ret == 0:
-        print("Plotting function returned 0 - one of the labels not in predictions...")
-    else:
-        print("Plotting completed successfully")
-    
+	
+	
+	
 mode = 'debug'        
 if __name__ == "__main__":
     if mode == 'debug':
         listAllFiles = list()
-        #filepath = "C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\"
-        filepath ='\\\destore\\RDData\\Surgery\\Cough\\Frames50\\'
+        filepath = "C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\train\\"
+        #filepath ='\\\destore\\RDData\\Surgery\\Cough\\Frames50\\'
         #filepath = "c:\\Users\\frida.hauler\\Anaconda3\\myTries\\dataSets\\"
         print(getFilesFromDir(filepath, 'frames'))
         readfiles(filepath)
