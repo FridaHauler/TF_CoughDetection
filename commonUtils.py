@@ -143,7 +143,7 @@ def readfiles(mypath):
 
         master_record.append(reading)
         master_label.append(label)
-        #print('test format:', master_label[0:5], master_record[0:5])
+        print('test format:', len(master_label), type(master_record))
         
         index = index + 1
         #check and find if any readings have one or more labels missing
@@ -177,7 +177,7 @@ def reshape(df_file, n_steps, n_length):
                     start = i + 1
         return (result)
         
-mode = 'ddebug'        
+mode = 'debug'        
 if __name__ == "__main__":
     if mode == 'debug':
         listAllFiles = list()
