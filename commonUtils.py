@@ -144,7 +144,7 @@ def readfiles(mypath):
         master_record.append(reading)
         master_label.append(label)
         #print('test format:', master_label[0:5], master_record[0:5])
-		
+        
         index = index + 1
         #check and find if any readings have one or more labels missing
     #print("read files...", index)
@@ -154,7 +154,7 @@ def readfiles(mypath):
 
     #65-35 split
     train_record = master_record[1:50]
-    #print(train_record)
+    print(type(train_record))
     train_label = master_label[0:50]
     train_files = master_file_list[0: 50]
     
@@ -163,13 +163,21 @@ def readfiles(mypath):
     test_files = master_file_list[50: 100]
     
     num_iterations = 1
-    frames = np.reshape(train_record, (1,2))
-    print("Plotting results..." ,size(train_record))
-    
-	
-	
-	
-mode = 'debug'        
+    #frames = np.reshape(train_record, (1,6))
+    print("Plotting results..." ,len(train_record))
+    #pd.DataFrame(data=test_record, index='1', columns='frames*', dtype=None)
+        
+def reshape(df_file, n_steps, n_length):
+        #n_steps, n_length = 50, 301
+        #trainX = df_file.reshape((df_file.shape[0], n_steps, n_length))
+        start = 0
+        for i in range(0, len(df_file.index)):
+           if (i + 1)%50 == 0:
+                    result = df_file.iloc[start:i+1].values.reshape(n_steps,n_length)
+                    start = i + 1
+        return (result)
+        
+mode = 'ddebug'        
 if __name__ == "__main__":
     if mode == 'debug':
         listAllFiles = list()
@@ -178,5 +186,17 @@ if __name__ == "__main__":
         #filepath = "c:\\Users\\frida.hauler\\Anaconda3\\myTries\\dataSets\\"
         print(getFilesFromDir(filepath, 'frames'))
         readfiles(filepath)
-    else:
+    elif (mode == 'HAR'):
         trainX, trainy, testX, testy = load_HARdataset('C:\\Brainlab\\CoughDetectionApp\\src\\')
+    else:
+        df_file = pd.read_csv("C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\train\\iffw9UfadVxlxHZ53fyE_frames.csv", header=None)
+        print(df_file, len(df_file))
+        result=[]
+        n_steps, n_length = 50, 301
+        #trainX = df_file.reshape((df_file.shape[0], n_steps, n_length))
+        start = 0
+        for i in range(0, len(df_file.index)):
+           if (i + 1)%50 == 0:
+                    result = df_file.iloc[start:i+1].values.reshape(n_steps,n_length)
+                    start = i + 1
+           print((result))
