@@ -3,15 +3,15 @@ from numpy import std
 from numpy import dstack
 from pandas import read_csv
 
-from keras.models import Sequential, save_model
-from keras.layers import Dense
-from keras.layers import Flatten
-from keras.layers import Dropout
-from keras.layers import LSTM
-from keras.layers import TimeDistributed
-from keras.layers.convolutional import Conv1D
-from keras.layers.convolutional import MaxPooling1D
-from keras.utils import to_categorical
+from  tensorflow.keras.models import Sequential, save_model
+from  tensorflow.keras.layers import Dense
+from  tensorflow.keras.layers import Flatten
+from  tensorflow.keras.layers import Dropout
+from  tensorflow.keras.layers import LSTM
+from  tensorflow.keras.layers import TimeDistributed
+from  tensorflow.keras.layers import Conv1D
+from  tensorflow.keras.layers import MaxPooling1D
+from  tensorflow.keras.utils import to_categorical
 from matplotlib import pyplot
 from tensorflow.keras import Model
 import tensorflow as tf
@@ -81,7 +81,7 @@ def export_tflite(classifier):
 def run_experiment(repeats=2):
 	# load data
 	print('________________________', os.path.realpath('.'))
-	path_dataset = 'C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\test\\'
+	path_dataset = '\\\destore\\RDData\\Surgery\\Cough\\Frames50\\'
 	trainX, trainy, testX, testy = load_dataset(path_dataset)
 	# repeat experiment
 	scores = list()
