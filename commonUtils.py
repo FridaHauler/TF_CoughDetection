@@ -13,7 +13,7 @@ from copy import copy
 import matplotlib.pyplot as plt
 from matplotlib import pyplot
 
-from tensorflow.keras.utils import to_categorical
+#from tensorflow.keras.utils import to_categorical
 
 
 # load a single file as a numpy array
@@ -107,11 +107,12 @@ def readfiles(mypath):
     master_file_index = {}
     master_file_list = []
     record_data_lengths = []
-    try:
-        os.remove("log.txt") 
-    except OSError:
-        pass
-    log = open("log.txt", "w+")
+    data_records=[]
+    #try:
+    #    os.remove("log.txt") 
+    #except OSError:
+    #    pass
+    #log = open("log.txt", "w+")
     
     index = 0
     
@@ -140,32 +141,34 @@ def readfiles(mypath):
                     #print('what to do with the noLabels?')
                     label.append(item[0])
                     reading.append(item[1:])
-
-        master_record.append(reading)
-        master_label.append(label)
-        print('test format:', len(master_label), type(master_record))
+            master_record.append(reading)
+            master_label.append(label)
+        print('test format:', len(reading), len(master_record))
+        data_records = split_list_into_chunks(master_record, chunk_size=6)     
         
         index = index + 1
         #check and find if any readings have one or more labels missing
-    #print("read files...", index)
+    print("[debug]: nr of read files...", index,'lenght of the data read (master_record): ',  len(master_record), '_and the chunked data len: ', len(data_records))
     
     #print("Creating model training and testing data-blocks from master file list:...", master_file_list[0:10])
   
 
     #65-35 split
-    train_record = master_record[1:50]
-    print(type(train_record))
-    train_label = master_label[0:50]
-    train_files = master_file_list[0: 50]
+    train_record = split_list_into_chunks(master_record, chunk_size=6)  
+    print(type(train_record), len(train_record))
+    train_label = master_label[0:round(len(master_label))]
+    train_files = master_file_list[0:round(len(master_file_list)/2)]
+    print('[debug]: nr of trained label entries: ', len(train_label), "from nr of files:",len(train_files) )
     
-    test_record = master_record[50:100]
-    test_label = master_label[50:100]
-    test_files = master_file_list[50: 100]
+    test_record = master_record[round(len(master_record)/2) :len(master_record)]
+    test_label = master_label[round(len(master_label)/2):len(master_label)]
+    test_files = master_file_list[round(len(master_file_list)/2): len(master_file_list)]
     
-    num_iterations = 1
+    #num_iterations = 1
     #frames = np.reshape(train_record, (1,6))
-    print("Plotting results..." ,len(train_record))
+    print("[debug] test files..." ,len(test_files), len(train_files), len(master_file_list))
     #pd.DataFrame(data=test_record, index='1', columns='frames*', dtype=None)
+    return train_record, train_label, test_record, test_label
 
 
 def split_list_into_chunks(data, chunk_size=6):
@@ -199,9 +202,10 @@ if __name__ == "__main__":
         #filepath ='\\\destore\\RDData\\Surgery\\Cough\\Frames50\\'
         #filepath = "c:\\Users\\frida.hauler\\Anaconda3\\myTries\\dataSets\\"
         print(getFilesFromDir(filepath, 'frames'))
-        readfiles(filepath)
+        train_data, train_labels, test_data, test_labels = readfiles(filepath)
+        print('[debug] lenght of the train/test data and labels: ', len(train_data),': ', len(train_labels), ' ', len(test_data), ' ', len(test_labels))
     elif (mode == 'HAR'):
-        trainX, trainy, testX, testy = load_HARdataset('C:\\Brainlab\\CoughDetectionApp\\src\\')
+        trainX, trainy, testX, testy = load_dataset('C:\\Brainlab\\CoughDetectionApp\\src\\')
     else:
         df_file = pd.read_csv("C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\train\\iffw9UfadVxlxHZ53fyE_frames.csv", header=None)
         print(df_file, len(df_file))
