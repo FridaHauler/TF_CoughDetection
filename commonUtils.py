@@ -180,10 +180,11 @@ def readAndConcatCoughFrames(mypath):
     #frames = np.reshape(train_record, (1,6))
     #pd.DataFrame(data=test_record, index='1', columns='frames*', dtype=None)
     print('______________________let us see', type(train_label), type(test_record))
-    aTrain_label = np.asarray(train_label, dtype=np.float32)
-    aTrain_data = np.asarray(train_record, dtype=np.float32)
-    aTest_label = np.asarray(test_label, dtype=np.float32)
-    aTest_data = np.asarray(test_record, dtype=np.float32)
+    
+    aTrain_label = np.array(train_label, dtype=float)
+    aTrain_data = np.array(train_record, dtype=np.float32)
+    aTest_label = np.array(test_label, dtype=np.float32)
+    aTest_data = np.array(test_record, dtype=np.float32)
     return aTrain_label, aTrain_data, aTest_label, aTest_data
 
 
@@ -221,9 +222,10 @@ def writeList2csv(data, csvFileName):
     csvFile.close()
     return
         
-mode = 'debug'        
+mode = 'HAR'        
 if __name__ == "__main__":
     if mode == 'debug':
+        print('##############debug mode for cough detection data ############## ')
         listAllFiles = list()
         filepath = "C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\train\\"
         #filepath ='\\\destore\\RDData\\Surgery\\Cough\\Frames50\\'
@@ -238,7 +240,8 @@ if __name__ == "__main__":
 
         print('[debug] lenght of the train/test data and labels: ', len(train_data),': ', len(train_labels), ' ', len(test_data), ' ', len(test_labels))
         
-    elif (mode == 'HAR'):
+    elif (mode == 'debug'):
+        print('_______________HAR data__________')
         trainX, trainy, testX, testy = load_dataset('C:\\Brainlab\\CoughDetectionApp\\src\\')
     else:
         df_file = pd.read_csv("C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\train\\iffw9UfadVxlxHZ53fyE_frames.csv", header=None)

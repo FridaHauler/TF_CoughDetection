@@ -26,14 +26,24 @@ from commonUtils import load_file, load_group, load_dataset_group, load_dataset,
 # fit and evaluate a LSTM ReLu model
 def evaluate_model(trainX, trainy, testX, testy):
 	# define model
+	trainX = trainX.reshape(-1, 50, 6, order='F')
+	n_features =trainy.reshape(-1,50,6,order='F')
+	testX = testX.reshape(-1,50,6,order='F')
+	testy = testy.reshape(-1,50,6,order='F')
+
 	verbose, epochs, batch_size = 0, 25, 4
 	#verbose, epochs, batch_size = 1, 25, 128
 	n_timesteps, n_features, n_outputs = trainX.shape[1], trainX.shape[2], trainy.shape[1]
 	# reshape data into time steps of sub-sequences
 	n_steps, n_length = 4, 32
-	print('!!!!!!!!n_steps:', n_steps, 'n_timesteps: ', n_timesteps, 'n_features', n_features, 'n_outputs', n_outputs)
-	trainX = trainX.reshape((trainX.shape[0], n_steps, n_length, n_features))
-	testX = testX.reshape((testX.shape[0], n_steps, n_length, n_features))
+	
+	#trainX = trainX.reshape((trainX.shape[0], n_steps, n_length, n_features))
+	#testX = testX.reshape((testX.shape[0], n_steps, n_length, n_features))
+
+
+
+
+
 	# define model
 	model = Sequential()
 	#model.add(TimeDistributed(Conv1D(filters=64, kernel_size=3, activation='relu'), input_shape=(None,n_length,n_features)))
@@ -87,9 +97,6 @@ def run_experiment(repeats=2):
 
 	path_CoughDataset = 'C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\train\\'
 	trainX, trainy, testX, testy = readAndConcatCoughFrames(path_CoughDataset)
-
-
-
 	# repeat experiment
 	scores = list()
 	for r in range(repeats):
