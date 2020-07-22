@@ -157,7 +157,7 @@ def readAndConcatCoughFrames(mypath):
         master_record.append(reading)
         master_label.append(label)
         print('test format:', len(reading), len(master_record))
-        data_records = split_list_into_chunks(master_record, chunk_size=6)     
+        #data_records = split_list_into_chunks(master_record, chunk_size=6)     
         
         index = index + 1
         #check and find if any readings have one or more labels missing
@@ -167,11 +167,10 @@ def readAndConcatCoughFrames(mypath):
   
 
     #65-35 split
-    train_record = split_list_into_chunks(master_record, chunk_size=6)  
-    print(type(train_record), len(train_record))
+    #train_record = split_list_into_chunks(master_record, chunk_size=6)  
     train_label = master_label[0:round(len(master_label)/2)]
-    train_files = master_file_list[0:round(len(master_file_list)/2)]
-    print('[debug]: nr of trained label entries: ', len(train_label), "from nr of files:",len(train_files) )
+    train_record = master_file_list[0:round(len(master_record)/2)]
+    print('[debug]: nr of trained label entries: ', len(master_record) )
     
     test_record = master_record[round(len(master_record)/2) : ]
     test_label = master_label[round(len(master_label)/2): ]
@@ -179,10 +178,13 @@ def readAndConcatCoughFrames(mypath):
     
     #num_iterations = 1
     #frames = np.reshape(train_record, (1,6))
-    print("[debug] test files..." ,len(test_files), len(train_files), len(master_file_list))
     #pd.DataFrame(data=test_record, index='1', columns='frames*', dtype=None)
-
-    return np.asarray(train_record, dtype=np.float32), np.asarray(train_label, dtype=np.float32), np.asarray(test_record, dtype=np.float32), np.asarray(test_label, dtype.float32)
+    print('______________________let us see', type(train_label), type(test_record))
+    aTrain_label = np.asarray(train_label, dtype=np.float32)
+    aTrain_data = np.asarray(train_record, dtype=np.float32)
+    aTest_label = np.asarray(test_label, dtype=np.float32)
+    aTest_data = np.asarray(test_record, dtype=np.float32)
+    return aTrain_label, aTrain_data, aTest_label, aTest_data
 
 
 def split_list_into_chunks(data, chunk_size=6):
@@ -233,7 +235,7 @@ if __name__ == "__main__":
         train_labels =train_labels.reshape(-1,50,6,order='F')
         test_data = test_data.reshape(-1,50,6,order='F')
         test_labels = test_labels.reshape(-1,50,6,order='F')
-        
+
         print('[debug] lenght of the train/test data and labels: ', len(train_data),': ', len(train_labels), ' ', len(test_data), ' ', len(test_labels))
         
     elif (mode == 'HAR'):
