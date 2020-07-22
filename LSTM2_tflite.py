@@ -2,7 +2,8 @@ from numpy import mean
 from numpy import std
 from numpy import dstack
 from pandas import read_csv
-
+'''Win 7 
+'''
 from keras.models import Sequential, save_model
 from keras.layers import Dense
 from keras.layers import Flatten
@@ -11,6 +12,22 @@ from keras.layers import LSTM
 from keras.layers import TimeDistributed
 from keras.layers.convolutional import Conv1D
 from keras.layers.convolutional import MaxPooling1D
+
+'''Win 10
+os.environ['PATH'] = 'C:\\cuDNN\\cudnn-10.1-windows10-x64-v7.6.5.32\\cuda\\bin;' \
+	'C:\\Program Files\\NVIDIA GPU Computing Toolkit\CUDA\\v10.1\\bin;\{}'.format(os.environ['PATH'])
+
+from tensorflow.keras.models import Sequential, save_model
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import Dropout
+from tensorflow.keras.layers import LSTM
+from tensorflow.keras.layers import TimeDistributed
+from tensorflow.keras.layers import Conv1D
+from tensorflow.keras.layers import MaxPooling1D
+
+'''
+
 
 from keras.utils import to_categorical
 from matplotlib import pyplot
@@ -108,12 +125,16 @@ def run_experiment(repeats=2):
 	summarize_results(scores)
 	# convert keras model to tflite and save it
 	# Save the model
-	export_tflite(kmodel)
+	# Save the model
+	kmodel.save('kerasModel.h5')
+
 	converter = tf.lite.TFLiteConverter.from_keras_model(kmodel)
+	# NEED THIS
+	converter.experimental_new_converter = True
+
 	tflite_model = converter.convert()
-	# Save the TF Lite model.
-	with tf.io.gfile.GFile('model.tflite', 'wb') as f:
-		f.write(tflite_model)
+	tflite_model_name = "mymodel.tflite"
+	open(tflite_model_name, "wb").write(tflite_model)
 
 	#model.save("model.h5")
 

@@ -179,13 +179,11 @@ def readAndConcatCoughFrames(mypath):
     #num_iterations = 1
     #frames = np.reshape(train_record, (1,6))
     #pd.DataFrame(data=test_record, index='1', columns='frames*', dtype=None)
-    print('______________________let us see', type(train_label), type(test_record))
-    
-    aTrain_label = np.array(train_label, dtype=float)
-    aTrain_data = np.array(train_record, dtype=np.float32)
-    aTest_label = np.array(test_label, dtype=np.float32)
-    aTest_data = np.array(test_record, dtype=np.float32)
-    return aTrain_label, aTrain_data, aTest_label, aTest_data
+    train_label = np.array(train_label, dtype=float)
+    train_record = np.array(train_record, dtype=np.float32)
+    test_label = np.array(test_label, dtype=np.float32)
+    test_record = np.array(test_record, dtype=np.float32)
+    return train_record, train_label, test_record, test_label
 
 
 def split_list_into_chunks(data, chunk_size=6):
