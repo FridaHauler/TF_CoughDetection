@@ -12,7 +12,7 @@ from keras.layers import TimeDistributed
 from keras.layers.convolutional import Conv1D
 from keras.layers.convolutional import MaxPooling1D
 
-from  keras.utils import to_categorical
+from keras.utils import to_categorical
 from matplotlib import pyplot
 from tensorflow.keras import Model
 import tensorflow as tf
@@ -21,7 +21,7 @@ from tensorflow import lite
 import os
 
 from tensorflow.keras import datasets, layers, models
-from commonUtils import load_file, load_group, load_dataset_group, load_dataset
+from commonUtils import load_file, load_group, load_dataset_group, load_dataset, readAndConcatCoughFrames
 
 # fit and evaluate a LSTM ReLu model
 def evaluate_model(trainX, trainy, testX, testy):
@@ -83,8 +83,13 @@ def run_experiment(repeats=2):
 	# load data
 	print('________________________', os.path.realpath('.'))
 	#path_dataset = '\\\destore\\RDData\\Surgery\\Cough\\Frames50\\'
-	path_dataset = 'C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\train\\'
-	trainX, trainy, testX, testy = load_dataset(path_dataset)
+	#trainX, trainy, testX, testy = load_dataset(path_dataset)
+
+	path_CoughDataset = 'C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\train\\'
+	trainX, trainy, testX, testy = readAndConcatCoughFrames(path_CoughDataset)
+
+
+
 	# repeat experiment
 	scores = list()
 	for r in range(repeats):
