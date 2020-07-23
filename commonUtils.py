@@ -245,6 +245,8 @@ def writeList2csv(data, csvFileName):
 
 def readAll2PD(fileLoc):
     import glob, math
+    label_map = {"noLabel": 0, "Single cough": 1, "Multiple coughs": 2, "Clear throat": 3, "Short laughing":4}
+
     df_file = pd.concat(map(pd.read_csv, glob.glob(os.path.join(fileLoc, "*.csv"))))
     #df_file = pd.read_csv("C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\train\\iffw9UfadVxlxHZ53fyE_frames.csv", header=None)
     print(df_file, df_file.shape)
@@ -257,10 +259,10 @@ def readAll2PD(fileLoc):
     test_data=df_file.tail(len(df_file) -train_size)
 
     train_label = train_data.iloc[:, 0]
+    train_label = [label_map[lab] for lab in train_label]
     train_label = to_categorical(train_label)
-    label_map = {"noLabels": 0, "Single cough": 1, "Multiple coughs": 2, "Clear throat": 3}
-
-    train_label = train_label[0].map(label_map)
+    
+    train_label = train_label['labels'].map(label_map)
     print(train_label.type)
 
     train_data = train_data.iloc[:,1:]
@@ -268,8 +270,9 @@ def readAll2PD(fileLoc):
   
 
     test_label = test_data.iloc[:,0]
+    test_label = [label_map[lab] for lab in test_label]
     test_label = to_categorical(test_label)
-
+    train_label = train_label['labels'].map(label_map)
     test_data = test_data.iloc[:,1:]
     test_data = np.array(test_data).reshape(-1, 50, 6, order='F')
 
