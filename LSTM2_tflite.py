@@ -49,8 +49,6 @@ def evaluate_model(trainX, trainy, testX, testy):
 	testX = testX.reshape(-1,50,6,order='F')
 	testy = testy.reshape(-1,50,6,order='F')
 	'''
-	print(trainX[trainX.columns[0]])
-
 	n_timesteps, n_features = 50, 6  #trainX[trainX.columns[0]]
 	n_outputs =  trainX.shape[1]
 	
@@ -149,7 +147,9 @@ def run_experiment(repeats=2):
 
 	path_CoughDataset = 'C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\'
 	#trainX, trainy, testX, testy = readAndConcatCoughFrames(path_CoughDataset)
-
+	'''
+	trainX, trainy, testX, testy  = train_data, train_label, test_data, test_label 
+	'''
 	trainX, trainy, testX, testy = readAll2PD(path_CoughDataset)
 	
 	# repeat experiment

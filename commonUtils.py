@@ -257,7 +257,15 @@ def readAll2PD(fileLoc):
     test_data=df_file.tail(len(df_file) -train_size)
 
     train_label = train_data.iloc[:, 0]
+    train_data = train_data.iloc[:,1:]
+    train_data = np.array(train_data).reshape(-1, 50, 6, order='F')
     test_label = test_data.iloc[:,0]
+    test_data = test_data.iloc[:,1:]
+    test_data = np.array(test_data).reshape(-1, 50, 6, order='F')
+
+
+    print(train_data.shape, train_data)
+
     '''
     result=[]
     n_steps, n_length = 50, 301
