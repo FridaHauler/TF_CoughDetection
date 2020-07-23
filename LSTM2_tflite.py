@@ -43,16 +43,10 @@ from commonUtils import load_file, load_group, load_dataset_group, load_dataset,
 # fit and evaluate a LSTM ReLu model
 def evaluate_model(trainX, trainy, testX, testy):
 	# define model
-	'''
-	trainX = trainX.reshape(-1, 50, 6, order='F')
-	n_features =trainy.reshape(-1,50,6,order='F')
-	testX = testX.reshape(-1,50,6,order='F')
-	testy = testy.reshape(-1,50,6,order='F')
-	'''
-	n_timesteps, n_features = 50, 6  #trainX[trainX.columns[0]]
-	n_outputs =  trainX.shape[1]
+	print(trainX.shape[2], trainy.shape, testX.shape, testX.shape)
+	n_timesteps, n_features, n_outputs = trainX.shape[1], trainX.shape[2], trainX.shape[1]
 	
-	verbose, epochs, batch_size = 0, 25, 4
+	verbose, epochs, batch_size = 0, 2, 4
 	#verbose, epochs, batch_size = 1, 25, 128
 	#n_timesteps, n_features, n_outputs = trainX.shape[1], trainX.shape[2], trainy.shape[1]
 	# reshape data into time steps of sub-sequences
@@ -69,11 +63,12 @@ def evaluate_model(trainX, trainy, testX, testy):
 	print(trainy.shape)
 	print('#####################')
 
-	print('#####################')
+	print('########tests#############')
 	print(testX.shape)
 	print(testy.shape)
 	print('#####################')
 
+	
 	# define model
 	model = Sequential()
 	model.add(InputLayer(input_shape=(n_timesteps, n_features)))
@@ -82,15 +77,18 @@ def evaluate_model(trainX, trainy, testX, testy):
 	model.add(Dropout(0.5))
 	model.add(MaxPooling1D(pool_size=2))
 	# model.add(Flatten())
-	model.add(LSTM(32))
+	model.add(LSTM(100))
 	model.add(Dropout(0.5))
-	model.add(Dense(16, activation='relu'))
+	#model.add(Dense(16, activation='relu'))
+	#model.add(Dense(n_outputs, activation='softmax'))
+	model.add(Dense(100, activation='relu'))
 	model.add(Dense(n_outputs, activation='softmax'))
 	model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+	model.summary()
 	# fit network
 	model.fit(trainX, trainy, epochs=epochs, batch_size=batch_size, verbose=verbose)
 	_, accuracy = model.evaluate(testX, testy, batch_size=batch_size, verbose=0)
-	model.summary()
+	
 
 	'''
 	# define model
@@ -141,7 +139,7 @@ def export_tflite(classifier):
 # run an experiment
 def run_experiment(repeats=2):
 	# load data
-	print('________________________', os.path.realpath('.'))
+	#print('___________current directory:_____________', os.path.realpath('.'))
 	#path_dataset = '\\\destore\\RDData\\Surgery\\Cough\\Frames50\\'
 	#trainX, trainy, testX, testy = load_dataset(path_dataset)
 
@@ -151,7 +149,7 @@ def run_experiment(repeats=2):
 	trainX, trainy, testX, testy  = train_data, train_label, test_data, test_label 
 	'''
 	trainX, trainy, testX, testy = readAll2PD(path_CoughDataset)
-	
+		
 	# repeat experiment
 	scores = list()
 	for r in range(repeats):

@@ -247,7 +247,7 @@ def readAll2PD(fileLoc):
     import glob, math
     df_file = pd.concat(map(pd.read_csv, glob.glob(os.path.join(fileLoc, "*.csv"))))
     #df_file = pd.read_csv("C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\train\\iffw9UfadVxlxHZ53fyE_frames.csv", header=None)
-    print(df_file, len(df_file))
+    print(df_file, df_file.shape)
 
     total_size=len(df_file)
     train_size=math.floor(0.66*total_size) #(2/3 part of my dataset)
@@ -256,17 +256,23 @@ def readAll2PD(fileLoc):
     #test dataset
     test_data=df_file.tail(len(df_file) -train_size)
 
+
     train_label = train_data.iloc[:, 0]
     train_data = train_data.iloc[:,1:]
     train_data = np.array(train_data).reshape(-1, 50, 6, order='F')
+  
+
     test_label = test_data.iloc[:,0]
     test_data = test_data.iloc[:,1:]
     test_data = np.array(test_data).reshape(-1, 50, 6, order='F')
+    
+    '''debug:
+    print('All data:')
+    print(train_label)
+    print(train_data)
+    print(test_label)
+    print(test_data)
 
-
-    print(train_data.shape, train_data)
-
-    '''
     result=[]
     n_steps, n_length = 50, 301
     #trainX = df_file.reshape((df_file.shape[0], n_steps, n_length))
@@ -284,7 +290,7 @@ def readAll2PD(fileLoc):
     '''
     return train_data, train_label, test_data, test_label
         
-mode = 'fdebug'        
+mode = 'dataframeBased'        
 if __name__ == "__main__":
     if mode == 'debug':
         print('##############debug mode for cough detection data ############## ')
