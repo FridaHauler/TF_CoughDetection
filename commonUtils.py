@@ -261,7 +261,7 @@ def readAll2PD(fileLoc):
     label_map = {"noLabels": 0, "Single cough": 1, "Multiple coughs": 2, "Clear throat": 3}
 
     train_label = train_label[0].map(label_map)
-    print(train_label_nr)
+    print(train_label.type)
 
     train_data = train_data.iloc[:,1:]
     train_data = np.array(train_data).reshape(-1, 50, 6, order='F')
