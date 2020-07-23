@@ -44,7 +44,7 @@ from commonUtils import load_file, load_group, load_dataset_group, load_dataset,
 def evaluate_model(trainX, trainy, testX, testy):
 	# define model
 	print(trainX.shape[2], trainy.shape, testX.shape, testX.shape)
-	n_timesteps, n_features, n_outputs = trainX.shape[1], trainX.shape[2], trainX.shape[1]
+	n_timesteps, n_features, n_outputs = trainX.shape[1], trainX.shape[2], trainy.shape[1]
 	
 	verbose, epochs, batch_size = 0, 2, 4
 	#verbose, epochs, batch_size = 1, 25, 128

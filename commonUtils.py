@@ -258,11 +258,15 @@ def readAll2PD(fileLoc):
 
 
     train_label = train_data.iloc[:, 0]
+    train_label = to_categorical(train_label)
+
+
     train_data = train_data.iloc[:,1:]
     train_data = np.array(train_data).reshape(-1, 50, 6, order='F')
   
 
     test_label = test_data.iloc[:,0]
+    test_label = to_categorical(test_label)
     test_data = test_data.iloc[:,1:]
     test_data = np.array(test_data).reshape(-1, 50, 6, order='F')
     
