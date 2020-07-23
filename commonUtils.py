@@ -59,18 +59,18 @@ def load_dataset_group(group, prefix=''):
 def load_dataset(prefix=''):
     # load all train
     trainX, trainy = load_dataset_group('train', prefix + 'HARDataset/')
-    print('x train shape:', trainX.shape, 'train y shape:',  trainy.shape)
+    
     # load all test
     testX, testy = load_dataset_group('test', prefix + 'HARDataset/')
-    print(testX.shape, testy.shape)
+    print(type(testX), '_____testX, testy_______', type(testy))
     # zero-offset class values
     trainy = trainy - 1
     testy = testy - 1
     # one hot encode y
     trainy = to_categorical(trainy)
     testy = to_categorical(testy)
-    print("trainX.shape: ", trainX.shape, 'trainy.shape: ', trainy.shape, 'and the test: ', testX.shape, testy.shape)
-    print('__________**********_________', type(trainX))
+    #print("trainX.shape: ", trainX.shape, 'trainy.shape: ', trainy.shape, 'and the test: ', testX.shape, testy.shape)
+    
     return trainX, trainy, testX, testy
 
 
@@ -93,7 +93,7 @@ def getFilesFromDir(folder,prefix):
 def shuffle_data(trans_master_record, backup_record, trunc_master_label, master_file_list):
     length = len(trans_master_record)
     x = [i for i in range(0, length)]
-    print('xxxxxxxxx10xxxxxxxxxxx: ', x[0:10])
+    
     np.random.seed()
     np.random.shuffle(x)
     new_trans_master_record = []
@@ -141,7 +141,7 @@ def readAndConcatCoughFrames(mypath):
         new_read_file = []
         for item in read_file:
             new_read_file.append(item.split(','))
-        #print('###################', new_read_file)
+        
         reading = []
         label = []
         
@@ -178,8 +178,12 @@ def readAndConcatCoughFrames(mypath):
     
     #num_iterations = 1
     #frames = np.reshape(train_record, (1,6))
-    #pd.DataFrame(data=test_record, index='1', columns='frames*', dtype=None)
-    train_label = np.array(train_label, dtype=float)
+    #pd.DataFrame(data=test_record, index='1', columns='frames*', dtype=float32)
+    print('train_label type: ', type(train_label))
+
+    train_label = np.ndarray(train_label)
+    print('train_label type (expected would be a numpy.array____): ', type(train_label))
+    
     train_record = np.array(train_record, dtype=np.float32)
     test_label = np.array(test_label, dtype=np.float32)
     test_record = np.array(test_record, dtype=np.float32)
@@ -214,13 +218,13 @@ def writeList2csv(data, csvFileName):
     with csvFile as csvF:
         csvWriter = csv.writer(csvF)
         for item in data:
-            print(item)
+            #print(item)
             csvWriter.writerow(item[1:])
-        print(item)
+        #print(item)
     csvFile.close()
     return
         
-mode = 'HAR'        
+mode = 'debug'        
 if __name__ == "__main__":
     if mode == 'debug':
         print('##############debug mode for cough detection data ############## ')
@@ -238,10 +242,13 @@ if __name__ == "__main__":
 
         print('[debug] lenght of the train/test data and labels: ', len(train_data),': ', len(train_labels), ' ', len(test_data), ' ', len(test_labels))
         
-    elif (mode == 'debug'):
+    elif (mode == 'HAR'):
         print('_______________HAR data__________')
         trainX, trainy, testX, testy = load_dataset('C:\\Brainlab\\CoughDetectionApp\\src\\')
     else:
+        '''
+        reshape the csv to (*,50,6) with dataframes
+        '''
         df_file = pd.read_csv("C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\train\\iffw9UfadVxlxHZ53fyE_frames.csv", header=None)
         print(df_file, len(df_file))
         result=[]
@@ -252,4 +259,4 @@ if __name__ == "__main__":
            if (i + 1)%50 == 0:
                     result = df_file.iloc[start:i+1].values.reshape(n_steps,n_length)
                     start = i + 1
-           print((result))
+           #print((result))
