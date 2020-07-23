@@ -256,10 +256,12 @@ def readAll2PD(fileLoc):
     #test dataset
     test_data=df_file.tail(len(df_file) -train_size)
 
-
     train_label = train_data.iloc[:, 0]
     train_label = to_categorical(train_label)
+    label_map = {"noLabels": 0, "Single cough": 1, "Multiple coughs": 2, "Clear throat": 3}
 
+    train_label = train_label[0].map(label_map)
+    print(train_label_nr)
 
     train_data = train_data.iloc[:,1:]
     train_data = np.array(train_data).reshape(-1, 50, 6, order='F')
@@ -267,9 +269,10 @@ def readAll2PD(fileLoc):
 
     test_label = test_data.iloc[:,0]
     test_label = to_categorical(test_label)
+
     test_data = test_data.iloc[:,1:]
     test_data = np.array(test_data).reshape(-1, 50, 6, order='F')
-    
+
     '''debug:
     print('All data:')
     print(train_label)
