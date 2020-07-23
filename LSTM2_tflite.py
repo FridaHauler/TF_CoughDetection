@@ -5,7 +5,7 @@ from pandas import read_csv
 '''Win 7 
 '''
 from keras.models import Sequential, save_model
-from keras.layers import Dense
+from keras.layers import Dense, InputLayer
 from keras.layers import Flatten
 from keras.layers import Dropout
 from keras.layers import LSTM
@@ -49,23 +49,52 @@ def evaluate_model(trainX, trainy, testX, testy):
 	testX = testX.reshape(-1,50,6,order='F')
 	testy = testy.reshape(-1,50,6,order='F')
 	'''
-	print(trainX.shape[1])
-	n_timesteps, n_features = trainX.shape(-1, 50, 6, order='F'), trainy
-	
+	print(trainX[trainX.columns[0]])
+
+	n_timesteps, n_features = 50, 6  #trainX[trainX.columns[0]]
+	n_outputs =  trainX.shape[1]
 	
 	verbose, epochs, batch_size = 0, 25, 4
 	#verbose, epochs, batch_size = 1, 25, 128
 	#n_timesteps, n_features, n_outputs = trainX.shape[1], trainX.shape[2], trainy.shape[1]
 	# reshape data into time steps of sub-sequences
-	n_steps, n_length = 4, 32
+	n_steps, n_length = 6, 50
 	
 	#trainX = trainX.reshape((trainX.shape[0], n_steps, n_length, n_features))
 	#testX = testX.reshape((testX.shape[0], n_steps, n_length, n_features))
 
+	#trainy = trainX[trainX.columns[0]]
+	#testX = testX.shape[1]
+		
+	print('#####################')
+	print(trainX.shape)
+	print(trainy.shape)
+	print('#####################')
 
+	print('#####################')
+	print(testX.shape)
+	print(testy.shape)
+	print('#####################')
 
+	# define model
+	model = Sequential()
+	model.add(InputLayer(input_shape=(n_timesteps, n_features)))
+	model.add(Conv1D(filters=32, kernel_size=3, activation='relu'))
+	model.add(Conv1D(filters=16, kernel_size=3, activation='relu'))
+	model.add(Dropout(0.5))
+	model.add(MaxPooling1D(pool_size=2))
+	# model.add(Flatten())
+	model.add(LSTM(32))
+	model.add(Dropout(0.5))
+	model.add(Dense(16, activation='relu'))
+	model.add(Dense(n_outputs, activation='softmax'))
+	model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+	# fit network
+	model.fit(trainX, trainy, epochs=epochs, batch_size=batch_size, verbose=verbose)
+	_, accuracy = model.evaluate(testX, testy, batch_size=batch_size, verbose=0)
+	model.summary()
 
-
+	'''
 	# define model
 	model = Sequential()
 	#model.add(TimeDistributed(Conv1D(filters=64, kernel_size=3, activation='relu'), input_shape=(None,n_length,n_features)))
@@ -84,6 +113,7 @@ def evaluate_model(trainX, trainy, testX, testy):
 	# evaluate model
 	_, accuracy = model.evaluate(testX, testy, batch_size=batch_size, verbose=0)
 	model.summary()
+	'''
 	return accuracy, model
 
 # summarize scores
