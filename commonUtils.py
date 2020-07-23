@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as np, numpy
 from numpy import std
 from numpy import mean
 from numpy import dstack
@@ -146,47 +146,66 @@ def readAndConcatCoughFrames(mypath):
         label = []
         
         for item in new_read_file:
-            if item[0] != 'noLabel' and rand_state.rand()<0.01:
-                    #print('what to do with the noLabels?')
+            if item[0] != 'noLabel' and rand_state.rand()<0.33:
+                    #print('labels?', item[0])
                     label.append(item[0])
                     reading.append(item[1:])
-            elif rand_state.rand()<0.33:
-                   #print('what to do with the noLabels?')
+            elif rand_state.rand()<0.001:
+                   #print('what to do with the noLabels?', item[0], item[1:])
                     label.append(item[0])
                     reading.append(item[1:])
-        master_record.append(reading)
-        master_label.append(label)
-        print('test format:', len(reading), len(master_record))
+            master_record.append(reading)
+            master_label.append(label)
+        
         #data_records = split_list_into_chunks(master_record, chunk_size=6)     
         
         index = index + 1
         #check and find if any readings have one or more labels missing
-    print("[debug]: nr of read files...", index,'lenght of the data read (master_record): ',  len(master_record), '_and the chunked data len: ', len(data_records))
+    # endfor: parsing all the data from the folder to master_record(1-300:) and master_label(0:)
+    print("[debug]: total record: ",len(master_record) )
+    print("[debug]: total record: " ,np.array(master_record, dtype=np.float).shape)
     
-    #print("Creating model training and testing data-blocks from master file list:...", master_file_list[0:10])
-  
-
-    #65-35 split
     #train_record = split_list_into_chunks(master_record, chunk_size=6)  
-    train_label = master_label[0:round(len(master_label)/2)]
-    train_record = master_file_list[0:round(len(master_record)/2)]
-    print('[debug]: nr of trained label entries: ', len(master_record) )
+    N=len(master_record)/2
     
-    test_record = master_record[round(len(master_record)/2) : ]
+    train_label = master_label[0:round(N)]
+    train_record = master_record[0:round(len(master_record)/2)]
+    
     test_label = master_label[round(len(master_label)/2): ]
-    test_files = master_file_list[round(len(master_file_list)/2):  ]
+    test_record = master_record[round(len(master_record)/2) : ]
+    
+    test_files = master_file_list[: ]
+    print('[debug]: from : ', len(test_files), 'files, records split to training: ',  len(train_label), len(train_record), 'and to test: ', len(test_record) )
     
     #num_iterations = 1
     #frames = np.reshape(train_record, (1,6))
     #pd.DataFrame(data=test_record, index='1', columns='frames*', dtype=float32)
-    print('train_label type: ', type(train_label))
-
-    train_label = np.ndarray(train_label)
-    print('train_label type (expected would be a numpy.array____): ', type(train_label))
     
-    train_record = np.array(train_record, dtype=np.float32)
-    test_label = np.array(test_label, dtype=np.float32)
-    test_record = np.array(test_record, dtype=np.float32)
+    print('train_label type (expected would be a numpy.array____): ', len(train_label), len(train_record), 'len(test_record): ', len(test_record))
+    
+    for x in train_record:
+        print(len(x))
+
+    train_record = np.array(train_record, dtype=np.float)
+    train_label = np.array(train_label, dtype=np.float)
+    test_record = np.array(test_record, dtype=np.float)
+    test_label = np.array(test_label, dtype=np.float)
+
+    print('All data before reshape:')
+    print(train_label)
+    print(train_record)
+    print(test_label)
+    print(test_record)
+
+    train_record = train_record.reshape(-1, 50, 6, order='F')
+    test_record = test_record.reshape(-1,50,6,order='F')
+
+    print('All data:')
+    print(train_label)
+    print(train_record)
+    print(test_label)
+    print(test_record)
+
     return train_record, train_label, test_record, test_label
 
 
@@ -229,16 +248,13 @@ if __name__ == "__main__":
     if mode == 'debug':
         print('##############debug mode for cough detection data ############## ')
         listAllFiles = list()
-        filepath = "C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\train\\"
-        #filepath ='\\\destore\\RDData\\Surgery\\Cough\\Frames50\\'
+        #filepath = "C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\train\\"
+        filepath ='\\\destore\\RDData\\Surgery\\Cough\\Frames50\\'
         #filepath = "c:\\Users\\frida.hauler\\Anaconda3\\myTries\\dataSets\\"
         print(getFilesFromDir(filepath, 'frames'))
         train_data, train_labels, test_data, test_labels = readAndConcatCoughFrames(filepath)
         
-        train_data = train_data.reshape(-1, 50, 6, order='F')
-        train_labels =train_labels.reshape(-1,50,6,order='F')
-        test_data = test_data.reshape(-1,50,6,order='F')
-        test_labels = test_labels.reshape(-1,50,6,order='F')
+       
 
         print('[debug] lenght of the train/test data and labels: ', len(train_data),': ', len(train_labels), ' ', len(test_data), ' ', len(test_labels))
         
