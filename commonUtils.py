@@ -192,8 +192,8 @@ def readAndConcatCoughFrames(mypath):
     test_label = np.array(test_label, dtype=np.float)
 
     print('All data before reshape:')
-    print(train_label)
-    print(train_record)
+    print(len(train_label), '_________', train_label)
+    print(len(train_record), '$$$$$$$$$$$$$$$', train_record)
     print(test_label)
     print(test_record)
 
@@ -242,14 +242,47 @@ def writeList2csv(data, csvFileName):
         #print(item)
     csvFile.close()
     return
+
+def readAll2PD(fileLoc):
+    import glob, math
+    df_file = pd.concat(map(pd.read_csv, glob.glob(os.path.join(fileLoc, "*.csv"))))
+    #df_file = pd.read_csv("C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\train\\iffw9UfadVxlxHZ53fyE_frames.csv", header=None)
+    print(df_file, len(df_file))
+
+    total_size=len(df_file)
+    train_size=math.floor(0.66*total_size) #(2/3 part of my dataset)
+    #training dataset
+    train_data=df_file.head(train_size)
+    #test dataset
+    test_data=df_file.tail(len(df_file) -train_size)
+
+    train_label = train_data.iloc[:, 0]
+    test_label = test_data.iloc[:,0]
+    '''
+    result=[]
+    n_steps, n_length = 50, 301
+    #trainX = df_file.reshape((df_file.shape[0], n_steps, n_length))
+    start = 0
+    for i in range(0, len(df_file.index)):
+        if (i + 1)%50 == 0:
+            result = df_file.iloc[start:i+1].values.reshape(n_steps,n_length)
+            start = i + 1
+    
+    N= round(len(result)/2)
+    train_label = result[0:round(len(result)/2)]
+    train_data  = result[1:N]
+    test_label = result[N+1:]
+    test_data = result[N+1:]
+    '''
+    return train_data, train_label, test_data, test_label
         
-mode = 'debug'        
+mode = 'fdebug'        
 if __name__ == "__main__":
     if mode == 'debug':
         print('##############debug mode for cough detection data ############## ')
         listAllFiles = list()
-        #filepath = "C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\train\\"
-        filepath ='\\\destore\\RDData\\Surgery\\Cough\\Frames50\\'
+        filepath = "C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\"
+        #filepath ='\\\destore\\RDData\\Surgery\\Cough\\Frames50\\'
         #filepath = "c:\\Users\\frida.hauler\\Anaconda3\\myTries\\dataSets\\"
         print(getFilesFromDir(filepath, 'frames'))
         train_data, train_labels, test_data, test_labels = readAndConcatCoughFrames(filepath)
@@ -265,14 +298,6 @@ if __name__ == "__main__":
         '''
         reshape the csv to (*,50,6) with dataframes
         '''
-        df_file = pd.read_csv("C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\train\\iffw9UfadVxlxHZ53fyE_frames.csv", header=None)
-        print(df_file, len(df_file))
-        result=[]
-        n_steps, n_length = 50, 301
-        #trainX = df_file.reshape((df_file.shape[0], n_steps, n_length))
-        start = 0
-        for i in range(0, len(df_file.index)):
-           if (i + 1)%50 == 0:
-                    result = df_file.iloc[start:i+1].values.reshape(n_steps,n_length)
-                    start = i + 1
-           #print((result))
+    readAll2PD('C:\\Brainlab\\CoughDetectionApp\\src\\tmp')
+
+

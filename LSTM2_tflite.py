@@ -38,19 +38,24 @@ from tensorflow import lite
 import os
 
 from tensorflow.keras import datasets, layers, models
-from commonUtils import load_file, load_group, load_dataset_group, load_dataset, readAndConcatCoughFrames
+from commonUtils import load_file, load_group, load_dataset_group, load_dataset, readAndConcatCoughFrames, readAll2PD
 
 # fit and evaluate a LSTM ReLu model
 def evaluate_model(trainX, trainy, testX, testy):
 	# define model
+	'''
 	trainX = trainX.reshape(-1, 50, 6, order='F')
 	n_features =trainy.reshape(-1,50,6,order='F')
 	testX = testX.reshape(-1,50,6,order='F')
 	testy = testy.reshape(-1,50,6,order='F')
-
+	'''
+	print(trainX.shape[1])
+	n_timesteps, n_features = trainX.shape(-1, 50, 6, order='F'), trainy
+	
+	
 	verbose, epochs, batch_size = 0, 25, 4
 	#verbose, epochs, batch_size = 1, 25, 128
-	n_timesteps, n_features, n_outputs = trainX.shape[1], trainX.shape[2], trainy.shape[1]
+	#n_timesteps, n_features, n_outputs = trainX.shape[1], trainX.shape[2], trainy.shape[1]
 	# reshape data into time steps of sub-sequences
 	n_steps, n_length = 4, 32
 	
@@ -112,8 +117,11 @@ def run_experiment(repeats=2):
 	#path_dataset = '\\\destore\\RDData\\Surgery\\Cough\\Frames50\\'
 	#trainX, trainy, testX, testy = load_dataset(path_dataset)
 
-	path_CoughDataset = 'C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\train\\'
-	trainX, trainy, testX, testy = readAndConcatCoughFrames(path_CoughDataset)
+	path_CoughDataset = 'C:\\Brainlab\\CoughDetectionApp\\src\\tmp\\'
+	#trainX, trainy, testX, testy = readAndConcatCoughFrames(path_CoughDataset)
+
+	trainX, trainy, testX, testy = readAll2PD(path_CoughDataset)
+	
 	# repeat experiment
 	scores = list()
 	for r in range(repeats):
