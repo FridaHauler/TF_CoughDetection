@@ -52,8 +52,8 @@ def evaluate_model(trainX, trainy, testX, testy):
 	# reshape data into time steps of sub-sequences
 	n_steps, n_length = 6, 50
 	
-	trainX = trainX.reshape((trainX.shape[0], n_steps, n_length, n_features))
-	testX = testX.reshape((testX.shape[0], n_steps, n_length, n_features))
+	#trainX = trainX.reshape((trainX.shape[0], n_steps, n_length, n_features))
+	#testX = testX.reshape((testX.shape[0], n_steps, n_length, n_features))
 
 	#trainy = trainX[trainX.columns[0]]
 	#testX = testX.shape[1]
