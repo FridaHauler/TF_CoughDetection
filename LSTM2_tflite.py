@@ -72,8 +72,8 @@ def evaluate_model(trainX, trainy, testX, testy):
 	# define model
 	model = Sequential()
 	model.add(InputLayer(input_shape=(n_timesteps, n_features)))
+	model.add(Conv1D(filters=64, kernel_size=3, activation='relu'))
 	model.add(Conv1D(filters=32, kernel_size=3, activation='relu'))
-	model.add(Conv1D(filters=16, kernel_size=3, activation='relu'))
 	model.add(Dropout(0.5))
 	model.add(MaxPooling1D(pool_size=2))
 	# model.add(Flatten())
@@ -129,14 +129,14 @@ def export_tflite(classifier):
 		# Get the input and output tensors
 		input_tensor = sess.graph.get_tensor_by_name("dnn/input_from_feature_columns/input_layer/concat:0")
 		out_tensor = sess.graph.get_tensor_by_name("dnn/logits/BiasAdd:0")
-
+		'''
 		# here the code differs from the toco example above
 		#sess= tf.compat.v1.Session()
 		sess.run(tf.global_variables_initializer())
 		converter = tf.lite.TFLiteConverter.from_session(sess, [input_tensor], [out_tensor])
 		tflite_model = converter.convert()
 		open("converted_model.tflite", "wb").write(tflite_model)
-
+		'''
 # run an experiment
 def run_experiment(repeats=2):
 	# load data
@@ -165,6 +165,7 @@ def run_experiment(repeats=2):
 	# Save the model
 	kmodel.save('kerasModel.h5')
 
+	'''
 	converter = tf.lite.TFLiteConverter.from_keras_model(kmodel)
 	# NEED THIS
 	converter.experimental_new_converter = True
@@ -172,7 +173,7 @@ def run_experiment(repeats=2):
 	tflite_model = converter.convert()
 	tflite_model_name = "mymodel.tflite"
 	open(tflite_model_name, "wb").write(tflite_model)
-
+	'''
 	#model.save("model.h5")
 
 # run the experiment
