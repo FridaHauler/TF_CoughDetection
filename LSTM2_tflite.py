@@ -46,7 +46,7 @@ def evaluate_model(trainX, trainy, testX, testy):
 	print(trainX.shape[2], trainy.shape, testX.shape, testX.shape)
 	n_timesteps, n_features, n_outputs = trainX.shape[1], trainX.shape[2], trainy.shape[1]
 	
-	verbose, epochs, batch_size = 0, 2, 4
+	verbose, epochs, batch_size = 0, 50, 4
 	#verbose, epochs, batch_size = 1, 25, 128
 	#n_timesteps, n_features, n_outputs = trainX.shape[1], trainX.shape[2], trainy.shape[1]
 	# reshape data into time steps of sub-sequences
@@ -72,7 +72,7 @@ def evaluate_model(trainX, trainy, testX, testy):
 	# define model
 	model = Sequential()
 	model.add(InputLayer(input_shape=(n_timesteps, n_features)))
-	model.add(Conv1D(filters=64, kernel_size=3, activation='relu'))
+	model.add(Conv1D(filters=64, kernel_size=3, activation='relu', input_shape=(n_timesteps, n_features)))
 	model.add(Conv1D(filters=32, kernel_size=3, activation='relu'))
 	model.add(Dropout(0.5))
 	model.add(MaxPooling1D(pool_size=2))
@@ -161,9 +161,9 @@ def run_experiment(repeats=2):
 	# summarize results
 	summarize_results(scores)
 	# convert keras model to tflite and save it
+	
 	# Save the model
-	# Save the model
-	kmodel.save('kerasModel.h5')
+	kmodel.save('kerasModel_50.h5')
 
 	'''
 	converter = tf.lite.TFLiteConverter.from_keras_model(kmodel)
