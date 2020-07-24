@@ -4,7 +4,7 @@ from numpy import dstack
 from pandas import read_csv
 '''Win 7 
 '''
-from keras.models import Sequential, save_model
+from keras.models import Sequential, save_model, model_from_json
 from keras.layers import Dense, InputLayer
 from keras.layers import Flatten
 from keras.layers import Dropout
@@ -163,7 +163,14 @@ def run_experiment(repeats=2):
 	# convert keras model to tflite and save it
 	
 	# Save the model
-	kmodel.save('kerasModel_50.h5')
+	kmodel.save('kerasModel_5.h5')
+
+	model_json = kmodel.to_json()	
+	with open("kerasmodel5.json", "w") as json_file:
+		json_file.write(model_json)
+
+	kmodel.save_weights('jsonModel_weights.h5')
+
 
 	'''
 	converter = tf.lite.TFLiteConverter.from_keras_model(kmodel)

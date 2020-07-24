@@ -245,7 +245,7 @@ def writeList2csv(data, csvFileName):
 def resample(dataframe, random_state):
   temp_noLabel = dataframe[dataframe.iloc[:, 0] == 'noLabel']
   temp_someLabel = dataframe[dataframe.iloc[:, 0] != 'noLabel']
-  temp_all = pd.concat([temp_noLabel.sample(frac=3e-4, random_state=random_state), temp_someLabel.sample(frac=0.33, random_state=random_state )  ])
+  temp_all = pd.concat([temp_noLabel.sample(frac=0.01, random_state=random_state), temp_someLabel.sample(frac=0.33, random_state=random_state )  ])
   return temp_all.sample(frac=1.0, random_state=random_state)  # shuffle in the end
 
 
@@ -260,21 +260,20 @@ def readAll2PD(fileLoc):
     total_size=len(df_file)
     train_size=math.floor(0.66*total_size) #(2/3 part of my dataset)
     
-    train_data = df_file.head(train_size)
+   # train_data = df_file.head(train_size)
     #print class balance here
     
-
-    print(train_data['labels'])
-    train_data = resample(train_data, random_state)
     #print class balance here
-    print(train_data)
     #training dataset
     train_data=df_file.head(train_size)
+    train_data = resample(train_data, random_state)
+
     #test dataset
     test_data=df_file.tail(len(df_file) -train_size)
     test_data = resample(test_data, random_state)
 
     train_label = train_data.iloc[:, 0]
+
     #print(list(set(train_label)))
     train_label = [label_map[lab] for lab in train_label]
     train_label = to_categorical(train_label)
